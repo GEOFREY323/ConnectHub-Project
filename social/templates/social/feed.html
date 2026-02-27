@@ -1,0 +1,11 @@
+{% extends 'base.html' %}
+
+{% block content %}
+  <h1>Your Feed</h1>
+  <p><a href="{% url 'create_post' %}">Create new post</a></p>
+  {% for post in posts %}
+      {% include 'social/post_card.html' with post=post %}
+  {% empty %}
+      <p>No posts to show. Follow some users to see their posts here!</p>
+  {% endfor %}
+{% endblock %}

@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Profile</title>
+</head>
+<body>
+    <h1>{{ target_user.profile.display_name|default:target_user.username }}'s Profile</h1>
+    <p>Total Posts: {{ post_count }}</p>
+    <p>Total Comments: {{ comment_count }}</p>
+    <p>Followers: {{ follower_count }} | Following: {{ following_count }}</p>
+    {% if user != target_user %}
+        <form method="post" action="{% url 'follow' target_user.username %}">
+            {% csrf_token %}
+            <button type="submit">{% if is_following %}Unfollow{% else %}Follow{% endif %}</button>
+        </form>
+    {% else %}
+        {% if form %}
+            <h3>Edit Your Profile</h3>
+            <form method="post">
+                {% csrf_token %}
+                {{ form.as_p }}
+                <button type="submit">Save</button>
+            </form>
+        {% endif %}
+    {% endif %}
+    <hr>
+    <h2>Posts by {{ target_user.username }}</h2>
+    {% for post in posts %}
+        {% include 'social/post_card.html' with post=post %}
+    {% empty %}
+        <p>No posts yet.</p>
+    {% endfor %}
+</body>
+</html>

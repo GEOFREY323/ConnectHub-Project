@@ -1,0 +1,13 @@
+{% block content %}
+  <div style="text-align:center; padding:40px;">
+    <h1>Welcome to ConnectHub</h1>
+    <p style="font-size:18px; margin-bottom:30px;">Connect with friends, share your thoughts, and discover what others are posting.</p>
+    
+    <div style="margin:30px 0;">
+      <p><a href="{% url 'register' %}" style="font-size:16px; padding:10px 20px; background:#007bff; color:white; text-decoration:none; border-radius:5px; display:inline-block;">Create Your Account</a></p>
+      <p style="margin:20px 0;">or</p>
+      <p><a href="{% url 'login' %}" style="font-size:16px; padding:10px 20px; background:#28a745; color:white; text-decoration:none; border-radius:5px; display:inline-block;">Login to Your Account</a></p>
+    </div>
+
+  </div>
+{% endblock %}

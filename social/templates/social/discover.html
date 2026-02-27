@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+
+{% block content %}
+  <h1>Discover</h1>
+  <p>All public posts</p>
+  {% for post in posts %}
+      {% include 'social/post_card.html' with post=post %}
+  {% empty %}
+      <p>No posts to discover.</p>
+  {% endfor %}
+{% endblock %}
+

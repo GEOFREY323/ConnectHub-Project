@@ -1,0 +1,37 @@
+<div class="post-card" style="border:1px solid #ccc; padding:8px; margin:8px 0;">
+    <p><strong><a href="{% url 'user_profile' post.author.username %}">{{ post.author.profile.display_name|default:post.author.username }}</a></strong>: {{ post.content }}</p>
+    <p><small>{{ post.created_at }}</small></p>
+    <p>Likes: {{ post.likes.count }}</p>
+    {% if user.is_authenticated %}
+      <form method="post" action="{% url 'like_post' post.pk %}" style="display:inline;">
+         {% csrf_token %}
+         <button type="submit">{% if user in post.likes.all %}Unlike{% else %}Like{% endif %}</button>
+      </form>
+      {% if post.author == user %}
+         <a href="{% url 'edit_post' post.pk %}">Edit</a>
+         <form method="post" action="{% url 'delete_post' post.pk %}" style="display:inline;">
+             {% csrf_token %}
+             <button type="submit">Delete</button>
+         </form>
+      {% endif %}
+      <hr>
+      <h4>Comments</h4>
+      {% for comment in post.comments.all %}
+          <p>{{ comment.author.username }}: {{ comment.content }} <small>{{ comment.created_at }}</small>
+             {% if comment.author == user %}
+             <form method="post" action="{% url 'delete_comment' comment.pk %}" style="display:inline;">
+                 {% csrf_token %}
+                 <button type="submit">x</button>
+             </form>
+             {% endif %}
+          </p>
+      {% empty %}
+          <p>No comments yet.</p>
+      {% endfor %}
+      <form method="post" action="{% url 'add_comment' post.pk %}">
+          {% csrf_token %}
+          <input type="text" name="content" placeholder="Add a comment" required>
+          <button type="submit">Comment</button>
+      </form>
+    {% endif %}
+</div>

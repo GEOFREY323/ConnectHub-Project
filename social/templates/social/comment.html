@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Comments</title>
+</head>
+<body>
+    <h1>Comments for {{ post.author.username }}'s Post</h1>
+    <p>{{ post.content }}</p>
+    <hr>
+    {% for comment in comments %}
+        <div>
+            <p><strong>{{ comment.author.username }}</strong>: {{ comment.content }}</p>
+            <p><small>{{ comment.created_at }}</small></p>
+        </div>
+    {% empty %}
+        <p>No comments yet.</p>
+    {% endfor %}
+</body>
+</html>
