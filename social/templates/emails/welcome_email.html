@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body { 
+      font-family: Arial, sans-serif; 
+      background: #f8fafc; 
+      margin: 0;
+      padding: 0;
+    }
+    .container { 
+      max-width: 600px; 
+      margin: 20px auto; 
+      background: white;
+      padding: 40px; 
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    }
+    h2 {
+      color: #0d9488;
+      margin-top: 0;
+    }
+    p {
+      color: #475569;
+      line-height: 1.6;
+    }
+    .btn { 
+      background: #0d9488; 
+      color: white; 
+      padding: 12px 24px;
+      text-decoration: none; 
+      border-radius: 6px; 
+      display: inline-block;
+      font-weight: bold;
+      margin: 20px 0;
+      transition: background 0.3s ease;
+    }
+    .btn:hover {
+      background: #0a7a6f;
+    }
+    .footer { 
+      color: #64748b; 
+      font-size: 12px; 
+      margin-top: 32px;
+      border-top: 1px solid #e2e8f0;
+      padding-top: 20px;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+  <div class='container'>
+    <h2>Welcome to ConnectHub, {{ username }}! 🎉</h2>
+    <p>Your account has been successfully created. You can now start connecting with others, sharing your moments, and exploring the vibrant ConnectHub community.</p>
+    
+    <p>Get started by visiting our academy to learn more about what you can do on ConnectHub:</p>
+    
+    <a href='https://academy.traitz.tech' class='btn'>
+      Start Exploring Academy
+    </a>
+    
+    <p>If you have any questions or need assistance, feel free to contact our support team.</p>
+    
+    <div class='footer'>
+      <p>Traitz Tech &mdash; Building the future, one connection at a time.</p>
+      <p>&copy; 2024 ConnectHub. All rights reserved.</p>
+    </div>
+  </div>
+</body>
+</html>

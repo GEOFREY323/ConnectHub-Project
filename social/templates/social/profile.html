@@ -1,30 +1,42 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>User Profile</title>
-</head>
-<body>
-    <h1>{{ target_user.profile.display_name|default:target_user.username }}'s Profile</h1>
+{% extends 'base.html' %}
+
+{% load static %}
+<image src="{{ target_user.profile.get_avatar_url }}"
+ alt="Profile Picture" width="150" height="150">
+
+{% block content %}
+    <div class='profile-image'>
+        <img src='{{ target_user.profile.get_avatar_url }}' alt='Profile Picture' class='profile-img' style="
+        border-radius: 50%;
+        height: 150px;
+        width: 150px;
+        ">
+    </div>
+  <h1>{{ target_user.profile.display_name|default:target_user.username }}'s Profile</h1>
+  <h2>Username: {{ target_user.username }}</h2>
+  <div class="profile-info">
     <p>Total Posts: {{ post_count }}</p>
     <p>Total Comments: {{ comment_count }}</p>
-    <p>Followers: {{ follower_count }} | Following: {{ following_count }}</p>
+    <p>Followers: {{ follower_count }} </p>
+    <p>Following: {{ following_count }}</p>
+    <p>{{ target_user.profile.bio }}</p>
+  </div>
     {% if user != target_user %}
         <form method="post" action="{% url 'follow' target_user.username %}">
             {% csrf_token %}
-            <button type="submit">{% if is_following %}Unfollow{% else %}Follow{% endif %}</button>
+            <button type="submit" class='btn btn-secondary'>{% if is_following %}Unfollow{% else %}Follow{% endif %}</button>
         </form>
     {% else %}
         {% if form %}
             <h3>Edit Your Profile</h3>
-            <form method="post">
+            <form method="post" enctype="multipart/form-data">
                 {% csrf_token %}
                 {{ form.as_p }}
-                <button type="submit">Save</button>
+                <button type="submit" class='btn'>Save</button>
             </form>
         {% endif %}
     {% endif %}
+
     <hr>
     <h2>Posts by {{ target_user.username }}</h2>
     {% for post in posts %}
@@ -32,5 +44,4 @@
     {% empty %}
         <p>No posts yet.</p>
     {% endfor %}
-</body>
-</html>
+{% endblock %}

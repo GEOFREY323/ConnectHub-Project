@@ -1,0 +1,13 @@
+<!-- The enctype attribute is REQUIRED for any form with file inputs -->
+<form method='POST' enctype='multipart/form-data'>
+{% csrf_token %}
+<!-- Profile picture upload -->
+<label for='avatar'>Profile Picture</label>
+<input type='file' id='avatar' name='avatar' accept='image/*'>
+<button type='submit'>Save Profile</button>
+</form>
+<!-- Show current image if one exists -->
+{% if user.profile.avatar %}
+<img src='{{ user.profile.avatar.url }}' alt='Current avatar' width='80'>
+<p>Upload a new image to replace the current one.</p>
+{% endif %}

@@ -4,6 +4,7 @@ from . import views
 urlpatterns = [
     # Auth & Home
     path('', views.home, name='home'),
+    path('home/', views.home, name='home'),
     path('register/', views.register, name='register'),
     
 
@@ -21,7 +22,7 @@ urlpatterns = [
     path('comment/<int:pk>/delete/', views.delete_comment, name='delete_comment'),
 
 
-    path('profile/', views.my_profile, name='my_profile'),
+    path('profile/', views.profile, name='profile'),
     path('profile/<str:username>/', views.user_profile, name='user_profile'),
 
 

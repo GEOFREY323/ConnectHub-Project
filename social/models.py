@@ -2,15 +2,24 @@
 from django.db import models
 from django.contrib.auth.models import User  # Import the User model
 
-class profile(models.Model):
+class Profile(models.Model):
     user      = models.OneToOneField(User, verbose_name=("User"), on_delete=models.CASCADE)
     display_name = models.CharField(max_length=60, blank=True)  # spec: max_length=60
     bio          = models.TextField(blank=True)
     joined_at   = models.DateTimeField(auto_now_add=True)
     following  = models.ManyToManyField('self', symmetrical=False, related_name='followers', blank=True)
+    avatar = models.ImageField(
+        upload_to='profile_pics/',
+        blank=True,         # Field is optional in forms
+        null=True,          # Allows NULL in the database
+        default='profile_pics/default_avatar.jpg'  # Fallback image
+    )
     def __str__(self):
-        # display_name may be blank, fall back to username
-        return self.display_name or self.user.username
+        return f'{self.user.username} Profile'
+    def get_avatar_url(self):
+        if self.avatar and hasattr(self.avatar, 'url'):
+            return self.avatar.url
+        return '/static/images/default_avatar.jpg'  # Fallback URL for default avatar
     class Meta:
         ordering = ['-joined_at']  # Newest profiles first
 
@@ -19,6 +28,7 @@ class Post(models.Model):
     author = models.ForeignKey(User, on_delete=models.CASCADE, related_name='posts')
     content = models.TextField(max_length=280)  # spec: 280 char limit
     created_at = models.DateTimeField(auto_now_add=True)
+    image = models.ImageField(upload_to='post_images/',blank=True,null=True)
     likes = models.ManyToManyField(User, related_name='liked_posts', blank=True)
     def __str__(self):
         # use display_name if available

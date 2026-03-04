@@ -117,12 +117,30 @@ USE_TZ = True
 
 STATIC_URL = 'static/'
 
+STATICFILES_DIRS = [
+    BASE_DIR / "static",
+    BASE_DIR / "media",
+]
+import os
+# The absolute filesystem path where uploaded files will be stored
+# e.g. /home/user/myproject/media/
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+# The URL prefix that Django uses to serve media files in development
+# e.g. http://localhost:8000/media/profile_pics/avatar.jpg
+MEDIA_URL = '/media/'
+
 # Where to redirect after a successful login
 LOGIN_REDIRECT_URL = '/feed/'
 # Where to redirect after logout
-LOGOUT_REDIRECT_URL = '/register/'
+LOGOUT_REDIRECT_URL = '/home/'
 # Where @login_required sends unauthenticated users
 LOGIN_URL = '/login/'
 
-# Default primary key field type
-# https://docs.djangoproject.com/en/6.0/ref/settings/#default-auto-field
+# Development — print emails to terminal
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+DEFAULT_FROM_EMAIL = 'Traitz Tech <gamgeofreyankinimbom@mail.com>'
+EMAIL_HOST      = 'smtp.gmail.com'
+EMAIL_PORT      = 587
+EMAIL_USE_TLS   = True                    # Secure connection
+EMAIL_HOST_USER = 'gamgeofreyankinimbom@mail.com'  # Your Gmail address
+EMAIL_HOST_PASSWORD = 'mdxd srhq lumi nddh' # NOT your Gmail password!

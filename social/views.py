@@ -1,19 +1,22 @@
+import os
+
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import UserCreationForm
-from .forms import PostForm, CommentForm, profileForm
+from .forms import PostForm, CommentForm, profileForm, CustomUserCreationForm
 from django.contrib.auth import login
 from django.contrib import messages
-from .models import profile, Post, Comment
+from .models import Profile, Post, Comment
 from django.contrib.auth.models import User
 from django.views.decorators.http import require_POST
 from django.http import JsonResponse
 from django.urls import reverse
+from .utils import send_html_email
 
 
 def _get_profile_for(user):
-    # helper: ensure user has a profile, create if missing
-    prof, _ = profile.objects.get_or_create(user=user, defaults={'display_name': user.username})
+    #ensure user has a profile, create if missing
+    prof, _ = Profile.objects.get_or_create(user=user, defaults={'display_name': user.username})
     return prof
 
 
@@ -30,18 +33,18 @@ def register(request):
         return redirect('feed')
 
     if request.method == 'POST':
-        form = UserCreationForm(request.POST)
+        form = CustomUserCreationForm(request.POST)
         if form.is_valid():
             user = form.save()
-            # create profile for the new user
-            profile.objects.create(user=user, display_name=user.username)
+            # Profile creation is handled by the signal in signals.py
+            # send_html_email is also called via the signal
             login(request, user)
-            messages.success(request, f'Welcome, {user.username}! Account created.')
+            messages.success(request, f'Welcome, {user.username}! Account created. Check your email for a welcome message.')
             return redirect('feed')
         else:
             messages.error(request, 'Please fix the errors below.')
     else:
-        form = UserCreationForm()
+        form = CustomUserCreationForm()
     return render(request, 'social/register.html', {'form': form})
 
 
@@ -49,15 +52,32 @@ def register(request):
 @require_POST
 def follow(request, username):
     target_user = get_object_or_404(User, username=username)
-    my_profile = _get_profile_for(request.user)
+    profile = _get_profile_for(request.user)
     target_profile = _get_profile_for(target_user)
-    if my_profile == target_profile:
+    if profile == target_profile:
         # can't follow yourself, just go back
         return redirect(request.META.get('HTTP_REFERER', reverse('home')))
-    if target_profile in my_profile.following.all():
-        my_profile.following.remove(target_profile)
+    
+    is_following = target_profile in profile.following.all()
+    
+    if is_following:
+        profile.following.remove(target_profile)
     else:
-        my_profile.following.add(target_profile)
+        # New follow - send notification email
+        profile.following.add(target_profile)
+        
+        # Send "new follower" email to the target user
+        if target_user.email:
+            send_html_email(
+                subject=f'{request.user.username} is now following you! 🎉',
+                template_name='emails/new_follower.html',
+                context={
+                    'follower_username': request.user.username,
+                    'profile_url': f'https://{request.get_host()}/profile/{request.user.username}/'
+                },
+                recipient_email=target_user.email
+            )
+    
     # return to referring page so follow works from different contexts
     return redirect(request.META.get('HTTP_REFERER', reverse('home')))
 
@@ -84,9 +104,12 @@ def create_post(request):
         form = PostForm(request.POST, request.FILES)
         if form.is_valid():
             post = form.save(commit=False)
+        
             post.author = request.user
             post.save()
-            return redirect('feed')
+            messages.success(request, 'Post created.')
+              
+            return redirect('profile')
     else:
         form = PostForm()
     return render(request, 'social/create_post.html', {'form': form})
@@ -137,11 +160,16 @@ def user_profile(request, username):
 
 
 @login_required
-def my_profile(request):
+def profile(request):
     prof = _get_profile_for(request.user)
     if request.method == 'POST':
-        form = profileForm(request.POST, instance=prof)
+        form = profileForm(request.POST, request.FILES, instance=prof)
         if form.is_valid():
+            # If a new avatar was uploaded AND an old one exists, delete the old file
+            if 'avatar' in request.FILES :
+                old_path = prof.avatar.path  # Full path on disk
+                if os.path.isfile(old_path):
+                    os.remove(old_path)         # Delete old file
             form.save()
             messages.success(request, 'Profile updated.')
             return redirect('profile')
@@ -151,6 +179,26 @@ def my_profile(request):
     context['form'] = form
     return render(request, 'social/profile.html', context)
 
+@login_required
+def edit_profile(request):
+    profile = request.user.profile
+    if request.method == 'POST':
+        # BOTH request.POST and request.FILES must be passed
+        form = profileForm(request.POST, request.FILES, instance=profile)
+        if form.is_valid():
+            # If a new avatar was uploaded AND an old one exists, delete the old file
+            if 'avatar' in request.FILES and profile.avatar:
+                old_path = profile.avatar.path  # Full path on disk
+                if os.path.isfile(old_path):
+                    os.remove(old_path)         # Delete old file
+            form.save()
+            messages.success(request, 'Profile updated successfully!')
+            return redirect('profile')
+        else:
+            messages.error(request, 'Please fix the errors below.')
+    else:
+        form = profileForm(instance=profile)  # Pre-fill with current data
+    return render(request, 'social/edit_profile.html', {'form': form})
 
 @login_required
 @require_POST

@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body { 
+      font-family: Arial, sans-serif; 
+      background: #f8fafc; 
+      margin: 0;
+      padding: 0;
+    }
+    .container { 
+      max-width: 600px; 
+      margin: 20px auto; 
+      background: white;
+      padding: 40px; 
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    }
+    h2 {
+      color: #0d9488;
+      margin-top: 0;
+    }
+    p {
+      color: #475569;
+      line-height: 1.6;
+    }
+    .follower-info {
+      background: #f1f5f9;
+      padding: 20px;
+      border-left: 4px solid #0d9488;
+      border-radius: 4px;
+      margin: 20px 0;
+    }
+    .follower-info strong {
+      color: #0d9488;
+      font-size: 18px;
+    }
+    .btn { 
+      background: #0d9488; 
+      color: white; 
+      padding: 12px 24px;
+      text-decoration: none; 
+      border-radius: 6px; 
+      display: inline-block;
+      font-weight: bold;
+      margin: 20px 0;
+      transition: background 0.3s ease;
+    }
+    .btn:hover {
+      background: #0a7a6f;
+    }
+    .footer { 
+      color: #64748b; 
+      font-size: 12px; 
+      margin-top: 32px;
+      border-top: 1px solid #e2e8f0;
+      padding-top: 20px;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+  <div class='container'>
+    <h2>You Have a New Follower! 🎉</h2>
+    
+    <p>Great news! Someone on ConnectHub is interested in your content.</p>
+    
+    <div class='follower-info'>
+      <p><strong>{{ follower_username }}</strong> just started following you!</p>
+    </div>
+    
+    <p>Check out their profile to explore their content and connect with them. You can also follow them back if you'd like to see more of their posts.</p>
+    
+    <a href='{{ profile_url }}' class='btn'>
+      View Their Profile
+    </a>
+    
+    <p>Keep sharing great content! Every post you create helps build meaningful connections on ConnectHub.</p>
+    
+    <div class='footer'>
+      <p>Traitz Tech &mdash; Building the future, one connection at a time.</p>
+      <p>&copy; 2024 ConnectHub. All rights reserved.</p>
+    </div>
+  </div>
+</body>
+</html>

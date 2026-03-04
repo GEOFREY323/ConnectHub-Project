@@ -1,8 +1,9 @@
 {% extends 'base.html' %}
-
 {% block content %}
-  <h1>Your Feed</h1>
-  <p><a href="{% url 'create_post' %}">Create new post</a></p>
+  <di class="new-feed">
+    <h1>Your Feed</h1>
+    <p><a class="new-post" href="{% url 'create_post' %}">Add Post</a></p>
+  </di>
   {% for post in posts %}
       {% include 'social/post_card.html' with post=post %}
   {% empty %}
