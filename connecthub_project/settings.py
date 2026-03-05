@@ -11,7 +11,7 @@ https://docs.djangoproject.com/en/6.0/ref/settings/
 """
 
 from pathlib import Path
-
+from decouple import config
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -23,7 +23,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-80sop1l=60-n#$b_m$vf-!^r=ylk*%un(p)&#7-o6nuy^&(k*6'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = config('DEBUG', default=True, cast=bool)
 
 ALLOWED_HOSTS = []
 
@@ -137,10 +137,13 @@ LOGOUT_REDIRECT_URL = '/home/'
 LOGIN_URL = '/login/'
 
 # Development — print emails to terminal
-EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
-DEFAULT_FROM_EMAIL = 'Traitz Tech <gamgeofreyankinimbom@mail.com>'
-EMAIL_HOST      = 'smtp.gmail.com'
-EMAIL_PORT      = 587
-EMAIL_USE_TLS   = True                    # Secure connection
-EMAIL_HOST_USER = 'gamgeofreyankinimbom@mail.com'  # Your Gmail address
-EMAIL_HOST_PASSWORD = 'mdxd srhq lumi nddh' # NOT your Gmail password!
+
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+DEFAULT_FROM_EMAIL = config('DEFAULT_FROM_EMAIL', default='')
+EMAIL_HOST      = config('EMAIL_HOST', default='')
+EMAIL_PORT      = config('EMAIL_PORT', default=587)
+EMAIL_USE_TLS   = config('EMAIL_USE_TLS', default=True)                    # Secure connection
+# Email credentials from .env
+EMAIL_HOST_USER     =config('EMAIL_HOST_USER', default='')
+EMAIL_HOST_PASSWORD = config('EMAIL_HOST_PASSWORD', default='')
+
