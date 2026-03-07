@@ -1,3 +1,5 @@
+{% load post_extras %}
+
 <div class="post-card">
     <div class="card-avatar">
         <img src="{{ post.author.profile.get_avatar_url }}"
@@ -21,8 +23,10 @@
     </div>
     {% endif %}
 
+      {% if post|can_edit:user %}
+            <a href="{% url 'edit_post' post.pk %}" class="edit-post">Edit Post</a>
+      {% endif %}
       {% if post.author == user %}
-            <a  href="{% url 'edit_post' post.pk %}" class="edit-post">Edit Post</a>
          <form method="post" action="{% url 'delete_post' post.pk %}" style="display:inline;">
              {% csrf_token %}
              <button type="submit" class="delete-post">Delete Post</button>

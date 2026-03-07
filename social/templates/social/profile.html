@@ -1,17 +1,34 @@
 {% extends 'base.html' %}
 
 {% load static %}
-<image src="{{ target_user.profile.get_avatar_url }}"
- alt="Profile Picture" width="150" height="150">
 
 {% block content %}
+  <div class='profile_fit'>
+    {# Cover photo section #}
+    <div class='profile-cover'>
+        {% if target_user.profile.get_cover_url %}
+            <img src='{{ target_user.profile.get_cover_url }}' alt='Cover photo' class='cover-img' style="
+            border_radius: 20px;
+            height: 100%;
+            width: 100%;
+            object-fit: cover;
+            ">
+        {% else %}
+            <div class='cover-placeholder'></div>
+        {% endif %}
+    </div>
+
     <div class='profile-image'>
         <img src='{{ target_user.profile.get_avatar_url }}' alt='Profile Picture' class='profile-img' style="
         border-radius: 50%;
         height: 150px;
         width: 150px;
+        border: 4px solid white;
+        object-fit: cover;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
         ">
     </div>
+  </div>
   <h1>{{ target_user.profile.display_name|default:target_user.username }}'s Profile</h1>
   <h2>Username: {{ target_user.username }}</h2>
   <div class="profile-info">

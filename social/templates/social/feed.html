@@ -4,6 +4,24 @@
     <h1>Your Feed</h1>
     <p><a class="new-post" href="{% url 'create_post' %}">Add Post</a></p>
   </di>
+
+  {# suggestions sidebar/box #}
+  {% if suggestions %}
+    <aside class="suggestions">
+      <h2>Suggested users</h2>
+      <ul>
+        {% for user in suggestions %}
+          <li>
+            <a href="{% url 'user_profile' user.username %}">{{ user.username }}</a>
+            <form method="post" action="{% url 'follow' user.username %}" style="display:inline;">
+              {% csrf_token %}
+              <button type="submit" class="btn btn-small">Follow</button>
+            </form>
+          </li>
+        {% endfor %}
+      </ul>
+    </aside>
+  {% endif %}
   {% for post in posts %}
       {% include 'social/post_card.html' with post=post %}
   {% empty %}

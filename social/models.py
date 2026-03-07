@@ -1,4 +1,6 @@
 # Create your models here.
+from email.policy import default
+
 from django.db import models
 from django.contrib.auth.models import User  # Import the User model
 
@@ -12,14 +14,25 @@ class Profile(models.Model):
         upload_to='profile_pics/',
         blank=True,         # Field is optional in forms
         null=True,          # Allows NULL in the database
-        default='profile_pics/default_avatar.jpg'  # Fallback image
+        default='profile_pics/default_avatar.png'  # Fallback image
+    )
+    cover_photo = models.ImageField(
+        upload_to='cover_pics/',
+        blank=True,
+        null=True,
+        default=   'cover_pics/default_cover_avatar.png'
     )
     def __str__(self):
         return f'{self.user.username} Profile'
     def get_avatar_url(self):
         if self.avatar and hasattr(self.avatar, 'url'):
             return self.avatar.url
-        return '/static/images/default_avatar.jpg'  # Fallback URL for default avatar
+        return '/static/images/default_avatar.png'  # Fallback URL for default avatar
+    def get_cover_url(self):
+        """Return the URL of the cover photo, or a fallback gradient."""
+        if self.cover_photo and hasattr(self.cover_photo, 'url'):
+            return self.cover_photo.url
+        return '/static/images/default_cover_avatar.png'
     class Meta:
         ordering = ['-joined_at']  # Newest profiles first
 
@@ -36,6 +49,17 @@ class Post(models.Model):
         return f"{name}: {self.content[:30]}..."
     class Meta:
         ordering = ['-created_at']  # Newest posts first
+
+    def can_edit(self, user):
+        """Return True if the given user may edit this post.
+
+        Only the author is allowed, and only within 15 minutes of creation.
+        """
+        if user != self.author:
+            return False
+        from django.utils import timezone
+        from datetime import timedelta
+        return timezone.now() - self.created_at <= timedelta(minutes=15)
 
 
 class Comment(models.Model):

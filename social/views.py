@@ -9,9 +9,12 @@ from django.contrib import messages
 from .models import Profile, Post, Comment
 from django.contrib.auth.models import User
 from django.views.decorators.http import require_POST
+from django.core.mail import EmailMessage
 from django.http import JsonResponse
 from django.urls import reverse
 from .utils import send_html_email
+from django.core.mail import send_mail
+from decouple import config
 
 
 def _get_profile_for(user):
@@ -68,15 +71,21 @@ def follow(request, username):
         
         # Send "new follower" email to the target user
         if target_user.email:
-            send_html_email(
+            send_mail(
                 subject=f'{request.user.username} is now following you! 🎉',
-                template_name='emails/new_follower.html',
-                context={
-                    'follower_username': request.user.username,
-                    'profile_url': f'https://{request.get_host()}/profile/{request.user.username}/'
-                },
-                recipient_email=target_user.email
+                # template_name='emails/new_follower.html',
+                message=f'Hi {target_user.username},\n\n{request.user.username} has started following you on ConnectHub! Check out their profile and posts.\n\nBest,\nThe ConnectHub Team',
+                # context={
+                #     'follower_username': request.user.username,
+                #     'profile_url': f'https://{request.get_host()}/profile/{request.user.username}/'
+                # },
+                from_email=config('EMAIL_HOST_USER', default=''),
+                # recipient_email=target_user.email,
+                recipient_list=[target_user.email],
+                fail_silently=False  # Don't raise error if email fails to send
+
             )
+            
     
     # return to referring page so follow works from different contexts
     return redirect(request.META.get('HTTP_REFERER', reverse('home')))
@@ -90,7 +99,17 @@ def feed(request):
     posts = Post.objects.filter(
         author__in=list(followed_users) + [request.user]
     ).order_by('-created_at').select_related('author', 'author__profile')
-    return render(request, 'social/feed.html', {'posts': posts})
+
+    # suggested users: those the current user does *not* follow (and not themself)
+    suggestions = User.objects.exclude(pk__in=followed_users.values_list('pk', flat=True))
+    suggestions = suggestions.exclude(pk=request.user.pk)
+    # random ordering so that the list feels dynamic
+    suggestions = suggestions.order_by('?')[:5]
+
+    return render(request, 'social/feed.html', {
+        'posts': posts,
+        'suggestions': suggestions,
+    })
 
 @login_required
 def discover(request):
@@ -180,6 +199,7 @@ def profile(request):
     return render(request, 'social/profile.html', context)
 
 @login_required
+
 def edit_profile(request):
     profile = request.user.profile
     if request.method == 'POST':
@@ -218,15 +238,32 @@ def delete_comment(request, pk):
 
 @login_required
 def edit_post(request, pk):
-    post = get_object_or_404(Post, pk=pk, author=request.user)
+    """Allow the author to update a post during a short grace period.
+
+    - only the original author may edit
+    - editing is permitted for fifteen minutes after creation
+    """
+    post = get_object_or_404(Post, pk=pk)
+
+    if request.user != post.author:
+        messages.error(request, "You don't have permission to edit that post.")
+        return redirect('feed')
+
+    # enforce 15‑minute window using model helper
+    if not post.can_edit(request.user):
+        messages.error(request, "The editing window for this post has expired.")
+        return redirect('feed')
+
     if request.method == 'POST':
         form = PostForm(request.POST, request.FILES, instance=post)
         if form.is_valid():
             form.save()
+            messages.success(request, 'Post updated.')
             return redirect('feed')
     else:
         form = PostForm(instance=post)
-    return render(request, 'social/edit_post.html', {'form': form})
+
+    return render(request, 'social/edit_post.html', {'form': form, 'post': post})
 
 
 def search(request):
@@ -252,3 +289,4 @@ def like_post(request, pk):
     if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
         return JsonResponse({'liked': liked, 'count': post.likes.count()})
     return redirect(request.META.get('HTTP_REFERER', reverse('home')))
+

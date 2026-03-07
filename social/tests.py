@@ -111,6 +111,70 @@ class SocialAppTests(TestCase):
         self.assertRedirects(resp, reverse('home'))
         self.assertNotIn(b.profile, a.profile.following.all())
 
+    def test_edit_post_window_and_permissions(self):
+        # only author may edit and only within 15 minutes
+        user = self.create_user('author', 'pw')
+        other = self.create_user('other', 'pw')
+        self.client.login(username='author', password='pw')
+        post = Post.objects.create(author=user, content='original')
+
+        # editing immediately should work
+        resp = self.client.get(reverse('edit_post', args=[post.pk]))
+        self.assertEqual(resp.status_code, 200)
+        resp = self.client.post(reverse('edit_post', args=[post.pk]), {'content': 'updated'})
+        self.assertRedirects(resp, reverse('feed'))
+        post.refresh_from_db()
+        self.assertEqual(post.content, 'updated')
+
+        # simulate expiry by modifying created_at outside window
+        from django.utils import timezone
+        from datetime import timedelta
+        post.created_at = timezone.now() - timedelta(minutes=16)
+        post.save()
+
+        # refresh feed and ensure edit link is no longer shown
+        resp = self.client.get(reverse('feed'))
+        self.assertNotContains(resp, 'Edit Post')
+
+        resp = self.client.post(reverse('edit_post', args=[post.pk]), {'content': 'later'})
+        self.assertRedirects(resp, reverse('feed'))
+        post.refresh_from_db()
+        # content should not have changed
+        self.assertEqual(post.content, 'updated')
+
+        # non-author cannot access
+        self.client.logout()
+        self.client.login(username='other', password='pw')
+        resp = self.client.get(reverse('edit_post', args=[post.pk]))
+        self.assertRedirects(resp, reverse('feed'))
+
+    def test_suggested_users_section(self):
+        # create a handful of users
+        main = self.create_user('main', 'pw')
+        others = [self.create_user(f'u{i}', 'pw') for i in range(1, 6)]
+
+        # let main follow the first two
+        main.profile.following.add(others[0].profile, others[1].profile)
+
+        self.client.login(username='main', password='pw')
+        resp = self.client.get(reverse('feed'))
+        # users 1 and 2 should not appear in suggestions
+        self.assertNotContains(resp, 'u1')
+        self.assertNotContains(resp, 'u2')
+        # the remaining three should appear (order may vary)
+        self.assertContains(resp, 'u3')
+        self.assertContains(resp, 'u4')
+        self.assertContains(resp, 'u5')
+
+        # follow a suggested user via the form button
+        resp = self.client.post(reverse('follow', args=['u3']), HTTP_REFERER=reverse('feed'))
+        self.assertRedirects(resp, reverse('feed'))
+        self.assertIn(others[2].profile, main.profile.following.all())
+
+        # after following u3, it should drop out of suggestions
+        resp = self.client.get(reverse('feed'))
+        self.assertNotContains(resp, 'u3')
+
     def test_search(self):
         u = self.create_user('searchuser', 'pw')
         self.client.login(username=u.username, password='pw')

@@ -1,7 +1,6 @@
-asgiref==3.10.0
-Django==5.2.8
-mysqlclient==2.2.8
+asgiref==3.11.1
+Django==6.0.2
 pillow==12.1.1
 python-decouple==3.8
-sqlparse==0.5.3
-tzdata==2025.2
+sqlparse==0.5.5
+tzdata==2025.3
