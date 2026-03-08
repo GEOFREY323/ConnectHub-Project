@@ -149,5 +149,4 @@ EMAIL_USE_TLS   = config('EMAIL_USE_TLS', default=True)                    # Sec
 # Email credentials from .env
 EMAIL_HOST_USER     =config('EMAIL_HOST_USER', default='')
 EMAIL_HOST_PASSWORD = config('EMAIL_HOST_PASSWORD', default='')
-
-
+ALLOWED_HOSTS = config('ALLOWED_HOSTS', default='*', cast=Csv)
