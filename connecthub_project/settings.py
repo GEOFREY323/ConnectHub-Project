@@ -10,6 +10,8 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/6.0/ref/settings/
 """
 import os
+import cloudinary
+import cloudinary.uploader
 from pathlib import Path
 import dj_database_url   # pip install dj-database-url
 from decouple import config, Csv
@@ -19,12 +21,26 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/6.0/howto/deployment/checklist/
+# Cloudinary credentials from environment variables
+CLOUDINARY_STORAGE = {
+    'CLOUD_NAME': config('CLOUDINARY_CLOUD_NAME'),
+    'API_KEY':    config('CLOUDINARY_API_KEY'),
+    'API_SECRET': config('CLOUDINARY_API_SECRET'),
+}
+# Tell Django to use Cloudinary for all media files
+DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
+INSTALLED_APPS = [
+    # ... your apps ...
+    'cloudinary_storage',  # Must come before 'django.contrib.staticfiles'
+    'django.contrib.staticfiles',
+    'cloudinary',
+]
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = 'django-insecure-80sop1l=60-n#$b_m$vf-!^r=ylk*%un(p)&#7-o6nuy^&(k*6'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = config('DEBUG', default=True, cast=bool)
+DEBUG = config('DEBUG', default=False, cast=bool)
 
 ALLOWED_HOSTS = []
 
@@ -75,12 +91,19 @@ WSGI_APPLICATION = 'connecthub_project.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/6.0/ref/settings/#databases
 
+import os
+import dj_database_url
+from pathlib import Path
+
+BASE_DIR = Path(__file__).resolve().parent.parent
+
 DATABASES = {
-     'default': dj_database_url.config(
-        default='sqlite:///db.sqlite3',
+    'default': dj_database_url.config(
+        default=f"sqlite:///{BASE_DIR / 'db.sqlite3'}",
         conn_max_age=600
     )
 }
+
 
 
 # Password validation
@@ -150,3 +173,4 @@ EMAIL_USE_TLS   = config('EMAIL_USE_TLS', default=True)                    # Sec
 EMAIL_HOST_USER     =config('EMAIL_HOST_USER', default='')
 EMAIL_HOST_PASSWORD = config('EMAIL_HOST_PASSWORD', default='')
 ALLOWED_HOSTS = config('ALLOWED_HOSTS', default='*', cast=Csv)
+
