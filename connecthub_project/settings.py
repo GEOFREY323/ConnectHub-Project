@@ -9,7 +9,7 @@ https://docs.djangoproject.com/en/6.0/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/6.0/ref/settings/
 """
-
+import os
 from pathlib import Path
 import dj_database_url   # pip install dj-database-url
 from decouple import config, Csv
@@ -49,6 +49,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',  # For serving static files in production
 ]
 
 ROOT_URLCONF = 'connecthub_project.urls'
@@ -148,4 +149,5 @@ EMAIL_USE_TLS   = config('EMAIL_USE_TLS', default=True)                    # Sec
 # Email credentials from .env
 EMAIL_HOST_USER     =config('EMAIL_HOST_USER', default='')
 EMAIL_HOST_PASSWORD = config('EMAIL_HOST_PASSWORD', default='')
+DATABASE_URL = config('DATABASE_URL', default='')
 
