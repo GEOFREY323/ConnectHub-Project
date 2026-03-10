@@ -17,20 +17,15 @@ import dj_database_url   # pip install dj-database-url
 from decouple import config, Csv
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
-print(config('DB_NAME'))  # Debugging line to check if DB_NAME is loaded correctly
+
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': config('DB_NAME'),
-        'USER': config('DB_USER'),
-        'PASSWORD': config('DB_PASSWORD'),
-        'HOST': config('DB_HOST'),
-        'PORT': config('DB_PORT', default='5432'),
-        'OPTIONS': {
-            'sslmode': 'require',  # Neon requires SSL
-        },
-    }
+    'default': dj_database_url.config(
+        default=config('DATABASE_URL'),
+        conn_max_age=600,
+        ssl_require=True
+    )
 }
+print()
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/6.0/howto/deployment/checklist/
@@ -40,6 +35,7 @@ CLOUDINARY_STORAGE = {
     'API_KEY':    config('CLOUDINARY_API_KEY'),
     'API_SECRET': config('CLOUDINARY_API_SECRET'),
 }
+
 # Tell Django to use Cloudinary for all media files
 DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
 
@@ -145,20 +141,14 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/6.0/howto/static-files/
 
 STATIC_URL = 'static/'
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')  # collectstatic destination
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 STATICFILES_DIRS = [
     BASE_DIR / "static",
     BASE_DIR / "media",
 ]
-import os
-# The absolute filesystem path where uploaded files will be stored
-# e.g. /home/user/myproject/media/
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
-# The URL prefix that Django uses to serve media files in development
-# e.g. http://localhost:8000/media/profile_pics/avatar.jpg
-MEDIA_URL = '/media/'
-
 # Where to redirect after a successful login
 LOGIN_REDIRECT_URL = '/feed/'
 # Where to redirect after logout
