@@ -37,19 +37,36 @@ def register(request):
 
     if request.method == 'POST':
         form = CustomUserCreationForm(request.POST)
+
         if form.is_valid():
-            user = form.save()
-            # Profile creation is handled by the signal in signals.py
-            # send_html_email is also called via the signal
+            user = form.save()  # Save only once
+
+            try:
+                send_html_email(
+                    subject='Welcome to ConnectHub! 🎉',
+                    template_name='emails/welcome_email.html',
+                    context={'username': user.username},
+                    recipient_email=user.email
+                )
+            except Exception as e:
+                print("Email failed:", e)
+
             login(request, user)
-            messages.success(request, f'Welcome, {user.username}! Account created. Check your email for a welcome message.')
+
+            messages.success(
+                request,
+                f'Welcome, {user.username}! Account created successfully.'
+            )
+
             return redirect('feed')
+
         else:
             messages.error(request, 'Please fix the errors below.')
+
     else:
         form = CustomUserCreationForm()
-    return render(request, 'social/register.html', {'form': form})
 
+    return render(request, 'social/register.html', {'form': form})
 
 @login_required
 @require_POST
