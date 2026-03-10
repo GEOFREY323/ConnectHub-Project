@@ -48,7 +48,7 @@ SECRET_KEY = 'django-insecure-80sop1l=60-n#$b_m$vf-!^r=ylk*%un(p)&#7-o6nuy^&(k*6
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = config('DEBUG', default=True, cast=bool)
 
-ALLOWED_HOSTS = config('ALLOWED_HOSTS', default='', cast=Csv)
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -62,7 +62,6 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'social',
     'cloudinary_storage',  # Must come before 'django.contrib.staticfiles'
-    'django.contrib.staticfiles',
     'cloudinary',
 ]
 
@@ -169,4 +168,3 @@ EMAIL_USE_TLS   = config('EMAIL_USE_TLS', default=True)                    # Sec
 # Email credentials from .env
 EMAIL_HOST_USER     =config('EMAIL_HOST_USER', default='')
 EMAIL_HOST_PASSWORD = config('EMAIL_HOST_PASSWORD', default='')
-ALLOWED_HOSTS = config('ALLOWED_HOSTS', default='', cast=Csv)
