@@ -48,8 +48,9 @@ SECRET_KEY = 'django-insecure-80sop1l=60-n#$b_m$vf-!^r=ylk*%un(p)&#7-o6nuy^&(k*6
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = config('DEBUG', default=True, cast=bool)
 
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = ['https://connecthub-project-production.up.railway.app', 'localhost']
 
+CSRF_TRUSTED_ORIGINS = ["https://connecthub-project-production.up.railway.app", "http://localhost:8000"]
 
 # Application definition
 
