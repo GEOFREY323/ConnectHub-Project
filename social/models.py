@@ -10,20 +10,22 @@ class Profile(models.Model):
     bio          = models.TextField(blank=True)
     joined_at   = models.DateTimeField(auto_now_add=True)
     following  = models.ManyToManyField('self', symmetrical=False, related_name='followers', blank=True)
+    
     avatar = models.ImageField(
-        upload_to='profile_pics/',
-        blank=True,         # Field is optional in forms
-        null=True,          # Allows NULL in the database
-        default='profile_pics/default_avatar.png'  # Fallback image
+    upload_to='profile_pics/',
+    blank=True,
+    null=True
     )
+
     cover_photo = models.ImageField(
         upload_to='cover_pics/',
         blank=True,
-        null=True,
-        default=   'cover_pics/default_cover_avatar.png'
+        null=True
     )
+    
     def __str__(self):
         return f'{self.user.username} Profile'
+    
     def get_avatar_url(self):
         if self.avatar and hasattr(self.avatar, 'url'):
             return self.avatar.url
