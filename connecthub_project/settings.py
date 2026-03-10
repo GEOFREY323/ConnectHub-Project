@@ -10,13 +10,14 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/6.0/ref/settings/
 """
 import os
-import cloudinary
-import cloudinary.uploader
 from pathlib import Path
 import dj_database_url   # pip install dj-database-url
 from decouple import config, Csv
 from dotenv import load_dotenv
 load_dotenv()
+
+import sys
+print(f"DATABASE_URL: {os.environ.get('DATABASE_URL', 'NOT SET')}", file=sys.stderr)
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -45,9 +46,9 @@ DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
 SECRET_KEY = 'django-insecure-80sop1l=60-n#$b_m$vf-!^r=ylk*%un(p)&#7-o6nuy^&(k*6'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = config('DEBUG', default=False, cast=bool)
+DEBUG = config('DEBUG', default=True, cast=bool)
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = (config('ALLOWED_HOSTS', default='', cast=Csv))
 
 
 # Application definition
@@ -164,7 +165,7 @@ EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 DEFAULT_FROM_EMAIL = config('DEFAULT_FROM_EMAIL', default='')
 EMAIL_HOST      = config('EMAIL_HOST', default='')
 EMAIL_PORT      = config('EMAIL_PORT', default=587)
-EMAIL_USE_TLS   = config('EMAIL_USE_TLS', default=False)                    # Secure connection
+EMAIL_USE_TLS   = config('EMAIL_USE_TLS', default=True)                    # Secure connection
 # Email credentials from .env
 EMAIL_HOST_USER     =config('EMAIL_HOST_USER', default='')
 EMAIL_HOST_PASSWORD = config('EMAIL_HOST_PASSWORD', default='')
