@@ -1,7 +1,7 @@
 [build]
-builder = 'RAILPACK'
+builder = "RAILPACK"
 
 [deploy]
-startCommand = 'gunicorn connecthub_project.wsgi --log-file -'
-preDeployCommand = 'python manage.py migrate'
-restartPolicyType = 'ON_FAILURE'
+preDeployCommand = "python manage.py migrate && python manage.py collectstatic --noinput"
+startCommand = "gunicorn connecthub_project.wsgi --log-file -"
+restartPolicyType = "ON_FAILURE"
