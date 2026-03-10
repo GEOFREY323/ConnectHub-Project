@@ -15,12 +15,14 @@ import cloudinary.uploader
 from pathlib import Path
 import dj_database_url   # pip install dj-database-url
 from decouple import config, Csv
+from dotenv import load_dotenv
+load_dotenv()
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 DATABASES = {
     'default': dj_database_url.config(
-        default=config('DATABASE_URL'),
+        default=config('DATABASE_URL', default='sqlite:///db.sqlite3'),
         conn_max_age=600,
         ssl_require=True
     )
