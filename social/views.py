@@ -204,7 +204,10 @@ def profile(request):
 
         if form.is_valid():
             print('Profile form is valid, saving...')
-            form.save()
+            try:
+                form.save()
+            except Exception as e:
+                print('Error occurred while saving profile:', e)
             messages.success(request, "Profile updated.")
             return redirect("profile")
         else:
