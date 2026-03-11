@@ -94,27 +94,30 @@ class profileForm(forms.ModelForm):
 # user is assigned in the view, not the form
 
 class PostForm(forms.ModelForm):
-  class Meta:
-    model  = Post
-    fields = ['content', 'image']   # Only show the content and image fields to users
+
+    class Meta:
+        model = Post
+        fields = ['content', 'image']
+
     def clean_image(self):
         image = self.cleaned_data.get('image')
+
         if image:
-            # 1. Check file size (limit to 2MB)
-            max_size = 2 * 1024 * 1024  # 2MB in bytes
+            max_size = 2 * 1024 * 1024
+
             if image.size > max_size:
                 raise forms.ValidationError(
-                    f'Image file too large. Maximum size is 2MB. '
-                    f'Your file is {image.size // 1024 // 1024:.1f}MB.'
+                    f"Image file too large. Maximum size is 2MB."
                 )
-            # 2. Check file extension
+
             allowed_extensions = ['.jpg', '.jpeg', '.png', '.webp']
             ext = os.path.splitext(image.name)[1].lower()
+
             if ext not in allowed_extensions:
                 raise forms.ValidationError(
-                    f'Unsupported file type: {ext}. '
-                    f'Allowed types: {', '.join(allowed_extensions)}'
+                    f"Unsupported file type: {ext}. Allowed types: {', '.join(allowed_extensions)}"
                 )
+
         return image
 # author is assigned in the view, not the form
 
