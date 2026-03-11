@@ -3,7 +3,7 @@ import os
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import UserCreationForm
-from .forms import PostForm, CommentForm, profileForm, CustomUserCreationForm
+from .forms import PostForm, CommentForm, ProfileForm, CustomUserCreationForm
 from django.contrib.auth import login
 from django.contrib import messages
 from .models import Profile, Post, Comment
@@ -200,7 +200,7 @@ def profile(request):
     prof = _get_profile_for(request.user)
 
     if request.method == "POST":
-        form = profileForm(request.POST, request.FILES, instance=prof)
+        form = ProfileForm(request.POST, request.FILES, instance=prof)
 
         if form.is_valid():
             form.save()
@@ -208,7 +208,7 @@ def profile(request):
             return redirect("profile")
 
     else:
-        form = profileForm(instance=prof)
+        form = ProfileForm(instance=prof)
 
     context = _profile_context_for_user(request.user, request.user)
     context["form"] = form
@@ -220,7 +220,7 @@ def edit_profile(request):
     profile = request.user.profile
     if request.method == 'POST':
         # BOTH request.POST and request.FILES must be passed
-        form = profileForm(request.POST, request.FILES, instance=profile)
+        form = ProfileForm(request.POST, request.FILES, instance=profile)
         if form.is_valid():
             # If a new avatar was uploaded AND an old one exists, delete the old file
             if 'avatar' in request.FILES and profile.avatar:
@@ -233,7 +233,7 @@ def edit_profile(request):
         else:
             messages.error(request, 'Please fix the errors below.')
     else:
-        form = profileForm(instance=profile)  # Pre-fill with current data
+        form = ProfileForm(instance=profile)  # Pre-fill with current data
     return render(request, 'social/edit_profile.html', {'form': form})
 
 @login_required
