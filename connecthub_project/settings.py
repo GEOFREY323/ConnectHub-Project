@@ -68,11 +68,11 @@ INSTALLED_APPS = [
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
-    'django.contrib.staticfiles',
-    'social',
     'cloudinary_storage',  # Must come before 'django.contrib.staticfiles'
     'cloudinary',
-]
+    'django.contrib.staticfiles',
+    'social',
+    ]
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
