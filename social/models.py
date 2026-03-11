@@ -41,7 +41,7 @@ class Profile(models.Model):
     def get_cover_url(self):
         if self.cover_photo and hasattr(self.cover_photo, "url"):
             return self.cover_photo.url
-        return "/static/images/default_cover_ava.png"
+        return "/static/images/default_cover_avatar.png"
 
     class Meta:
         ordering = ["-joined_at"]
