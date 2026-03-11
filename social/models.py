@@ -1,6 +1,6 @@
 # Create your models here.
 from email.policy import default
-
+from cloudinary.models import CloudinaryField
 from django.db import models
 from django.contrib.auth.models import User  # Import the User model
 
@@ -11,14 +11,12 @@ class Profile(models.Model):
     joined_at   = models.DateTimeField(auto_now_add=True)
     following  = models.ManyToManyField('self', symmetrical=False, related_name='followers', blank=True)
     
-    avatar = models.ImageField(
-    upload_to='profile_pics/',
+    avatar = CloudinaryField('profile_picture',
     blank=True,
     null=True
     )
 
-    cover_photo = models.ImageField(
-        upload_to='cover_pics/',
+    cover_photo = CloudinaryField('cover_photo',
         blank=True,
         null=True
     )
@@ -43,7 +41,7 @@ class Post(models.Model):
     author = models.ForeignKey(User, on_delete=models.CASCADE, related_name='posts')
     content = models.TextField(max_length=280)  # spec: 280 char limit
     created_at = models.DateTimeField(auto_now_add=True)
-    image = models.ImageField(upload_to='post_images/',blank=True,null=True)
+    image = CloudinaryField('post_image', blank=True, null=True)
     likes = models.ManyToManyField(User, related_name='liked_posts', blank=True)
     def __str__(self):
         # use display_name if available
