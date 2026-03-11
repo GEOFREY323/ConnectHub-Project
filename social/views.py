@@ -198,20 +198,24 @@ def user_profile(request, username):
 @login_required
 def profile(request):
     prof = _get_profile_for(request.user)
-    if request.method == 'POST':
+
+    if request.method == "POST":
         form = profileForm(request.POST, request.FILES, instance=prof)
+
         if form.is_valid():
             form.save()
-            messages.success(request, 'Profile updated.')
-            return redirect('profile')
+            messages.success(request, "Profile updated.")
+            return redirect("profile")
+
     else:
         form = profileForm(instance=prof)
+
     context = _profile_context_for_user(request.user, request.user)
-    context['form'] = form
-    return render(request, 'social/profile.html', context)
+    context["form"] = form
+
+    return render(request, "social/profile.html", context)
 
 @login_required
-
 def edit_profile(request):
     profile = request.user.profile
     if request.method == 'POST':

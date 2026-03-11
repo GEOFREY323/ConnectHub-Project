@@ -42,54 +42,56 @@ class CustomUserCreationForm(UserCreationForm):
         return user
 
 
-class profileForm(forms.ModelForm):
+class ProfileForm(forms.ModelForm):
   class Meta:
     model  = Profile
     fields = ['display_name', 'bio', 'avatar', 'cover_photo']
     widgets = {
             'bio': forms.Textarea(attrs={'rows': 4, 'placeholder': 'Tell people about yourself...'}),
             'display_name': forms.TextInput(attrs={'placeholder': 'Your display name'}),
-        }    
+        }
+    
   def clean_avatar(self):
-        avatar = self.cleaned_data.get('avatar')
-        if avatar:
-            # 1. Check file size (limit to 2MB)
-            max_size = 2 * 1024 * 1024  # 2MB in bytes
-            if avatar.size > max_size:
-                raise forms.ValidationError(
-                    f'Image file too large. Maximum size is 2MB. '
-                    f'Your file is {avatar.size // 1024 // 1024:.1f}MB.'
-                )
-            # 2. Check file extension
-            allowed_extensions = ['.jpg', '.jpeg', '.png', '.webp']
-            ext = os.path.splitext(avatar.name)[1].lower()
-            if ext not in allowed_extensions:
-                raise forms.ValidationError(
-                    f'Unsupported file type: {ext}. '
-                    f'Allowed types: {', '.join(allowed_extensions)}'
-                )
-        print(avatar)
-        return avatar
+    avatar = self.cleaned_data.get('avatar')
+
+    if avatar:
+        max_size = 2 * 1024 * 1024
+
+        if avatar.size > max_size:
+            raise forms.ValidationError(
+                f"Image file too large. Maximum size is 2MB."
+            )
+
+        allowed_extensions = ['.jpg', '.jpeg', '.png', '.webp']
+        ext = os.path.splitext(avatar.name)[1].lower()
+
+        if ext not in allowed_extensions:
+            raise forms.ValidationError(
+                f"Unsupported file type: {ext}. Allowed types: {', '.join(allowed_extensions)}"
+            )
+
+    return avatar
 
   def clean_cover_photo(self):
-        cover = self.cleaned_data.get('cover_photo')
-        if cover:
-            # Check file size (limit to 5MB for larger banner)
-            max_size = 5 * 1024 * 1024  # 5MB in bytes
-            if cover.size > max_size:
-                raise forms.ValidationError(
-                    f'Cover photo too large. Maximum size is 5MB. '
-                    f'Your file is {cover.size // 1024 // 1024:.1f}MB.'
-                )
-            # Check file extension
-            allowed_extensions = ['.jpg', '.jpeg', '.png', '.webp']
-            ext = os.path.splitext(cover.name)[1].lower()
-            if ext not in allowed_extensions:
-                raise forms.ValidationError(
-                    f'Unsupported file type: {ext}. '
-                    f'Allowed types: {', '.join(allowed_extensions)}'
-                )
-        return cover
+    cover = self.cleaned_data.get('cover_photo')
+
+    if cover:
+        max_size = 5 * 1024 * 1024
+
+        if cover.size > max_size:
+            raise forms.ValidationError(
+                f"Cover photo too large. Maximum size is 5MB."
+            )
+
+        allowed_extensions = ['.jpg', '.jpeg', '.png', '.webp']
+        ext = os.path.splitext(cover.name)[1].lower()
+
+        if ext not in allowed_extensions:
+            raise forms.ValidationError(
+                f"Unsupported file type: {ext}. Allowed types: {', '.join(allowed_extensions)}"
+            )
+
+    return cover
 
 # user is assigned in the view, not the form
 
