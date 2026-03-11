@@ -46,10 +46,11 @@ DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
 SECRET_KEY = 'django-insecure-80sop1l=60-n#$b_m$vf-!^r=ylk*%un(p)&#7-o6nuy^&(k*6'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = config('DEBUG', default=True, cast=bool)
+DEBUG = config('DEBUG', default=False, cast=bool)
 
 ALLOWED_HOSTS = [
     'connecthub-project-production.up.railway.app',
+    '.up.railway.app',  # Allow all subdomains of up.railway.app
     'localhost',
     '127.0.0.1'
 ]
@@ -58,7 +59,7 @@ CSRF_TRUSTED_ORIGINS = [
     'https://connecthub-project-production.up.railway.app',
     'http://localhost',
 ]
-
+secure_proxy_ssl_header = ('HTTP_X_FORWARDED_PROTO', 'https')
 
 # Application definition
 
