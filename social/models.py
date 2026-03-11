@@ -1,5 +1,4 @@
 # Create your models here.
-from email.policy import default
 from cloudinary.models import CloudinaryField
 from django.db import models
 from django.contrib.auth.models import User  # Import the User model
@@ -22,17 +21,17 @@ class Profile(models.Model):
     )
     
     def __str__(self):
-        return f'{self.user.username} Profile'
+        return f'{self.user.username} f"{self.user.username}profile"'
     
     def get_avatar_url(self):
         if self.avatar and hasattr(self.avatar, 'url'):
             return self.avatar.url
-        return '/static/images/default_avatar.png'  # Fallback URL for default avatar
+        return ""  # Fallback URL for default avatar
     def get_cover_url(self):
         """Return the URL of the cover photo, or a fallback gradient."""
         if self.cover_photo and hasattr(self.cover_photo, 'url'):
             return self.cover_photo.url
-        return '/static/images/default_cover_avatar.png'
+        return ""
     class Meta:
         ordering = ['-joined_at']  # Newest profiles first
 
