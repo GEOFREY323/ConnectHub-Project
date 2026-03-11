@@ -10,6 +10,9 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/6.0/ref/settings/
 """
 import os
+import cloudinary
+import cloudinary.uploader
+import cloudinary.api
 from pathlib import Path
 import dj_database_url   # pip install dj-database-url
 from decouple import config, Csv
@@ -28,7 +31,6 @@ DATABASES = {
         ssl_require=True
     )
 }
-print()
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/6.0/howto/deployment/checklist/
