@@ -1,39 +1,50 @@
-# Create your models here.
-from cloudinary.models import CloudinaryField
 from django.db import models
-from django.contrib.auth.models import User  # Import the User model
+from django.contrib.auth.models import User
+from cloudinary.models import CloudinaryField
+
 
 class Profile(models.Model):
-    user      = models.OneToOneField(User, verbose_name=("User"), on_delete=models.CASCADE)
-    display_name = models.CharField(max_length=60, blank=True)  # spec: max_length=60
-    bio          = models.TextField(blank=True)
-    joined_at   = models.DateTimeField(auto_now_add=True)
-    following  = models.ManyToManyField('self', symmetrical=False, related_name='followers', blank=True)
-    
-    avatar = CloudinaryField('profile_picture',
-    blank=True,
-    null=True
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+
+    display_name = models.CharField(max_length=60, blank=True)
+    bio = models.TextField(blank=True)
+    joined_at = models.DateTimeField(auto_now_add=True)
+
+    following = models.ManyToManyField(
+        'self',
+        symmetrical=False,
+        related_name='followers',
+        blank=True
     )
 
-    cover_photo = CloudinaryField('cover_photo',
+    avatar = CloudinaryField(
+        'profile_picture',
         blank=True,
         null=True
     )
-    
+
+    cover_photo = CloudinaryField(
+        'cover_photo',
+        blank=True,
+        null=True
+    )
+
     def __str__(self):
-        return f'{self.user.username} f"{self.user.username}profile"'
-    
+        return f"{self.user.username} profile"
+
     def get_avatar_url(self):
-        if self.avatar and hasattr(self.avatar, 'url'):
+        if self.avatar and hasattr(self.avatar, "url"):
             return self.avatar.url
-        return ""  # Fallback URL for default avatar
+        return "/static/images/default_avatar.png"
+
+
     def get_cover_url(self):
-        """Return the URL of the cover photo, or a fallback gradient."""
-        if self.cover_photo and hasattr(self.cover_photo, 'url'):
+        if self.cover_photo and hasattr(self.cover_photo, "url"):
             return self.cover_photo.url
-        return ""
+        return "/static/images/default_cover_ava.png"
+
     class Meta:
-        ordering = ['-joined_at']  # Newest profiles first
+        ordering = ["-joined_at"]
 
 
 class Post(models.Model):

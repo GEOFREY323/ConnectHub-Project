@@ -201,11 +201,6 @@ def profile(request):
     if request.method == 'POST':
         form = profileForm(request.POST, request.FILES, instance=prof)
         if form.is_valid():
-            # If a new avatar was uploaded AND an old one exists, delete the old file
-            if 'avatar' in request.FILES :
-                old_path = prof.avatar.path  # Full path on disk
-                if os.path.isfile(old_path):
-                    os.remove(old_path)         # Delete old file
             form.save()
             messages.success(request, 'Profile updated.')
             return redirect('profile')

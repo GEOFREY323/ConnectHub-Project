@@ -7,11 +7,14 @@
     {# Cover photo section #}
     <div class='profile-cover'>
         {% if target_user.profile.get_cover_url %}
-            <img src='{{ target_user.profile.get_cover_url }}' alt='Cover photo' class='cover-img' style="
-            border_radius: 20px;
-            height: 100%;
-            width: 100%;
-            object-fit: cover;
+            <img src="{{ target_user.profile.get_cover_url }}" 
+                alt="Cover photo"
+                class="cover-img"
+                style="
+                border-radius:20px;
+                height:250px;
+                width:100%;
+                object-fit:cover;
             ">
         {% else %}
             <div class='cover-placeholder'></div>
