@@ -52,17 +52,17 @@ class ProfileForm(forms.ModelForm):
         }
     
   def clean_avatar(self):
-    avatar = self.cleaned_data.get('avatar')
+    avatar = self.cleaned_data.get("avatar")
 
-    if avatar:
+    if avatar and hasattr(avatar, "size"):
         max_size = 2 * 1024 * 1024
 
         if avatar.size > max_size:
             raise forms.ValidationError(
-                f"Image file too large. Maximum size is 2MB."
+                "Image file too large. Maximum size is 2MB."
             )
 
-        allowed_extensions = ['.jpg', '.jpeg', '.png', '.webp']
+        allowed_extensions = [".jpg", ".jpeg", ".png", ".webp"]
         ext = os.path.splitext(avatar.name)[1].lower()
 
         if ext not in allowed_extensions:
@@ -73,17 +73,17 @@ class ProfileForm(forms.ModelForm):
     return avatar
 
   def clean_cover_photo(self):
-    cover = self.cleaned_data.get('cover_photo')
+    cover = self.cleaned_data.get("cover_photo")
 
-    if cover:
+    if cover and hasattr(cover, "size"):
         max_size = 5 * 1024 * 1024
 
         if cover.size > max_size:
             raise forms.ValidationError(
-                f"Cover photo too large. Maximum size is 5MB."
+                "Cover photo too large. Maximum size is 5MB."
             )
 
-        allowed_extensions = ['.jpg', '.jpeg', '.png', '.webp']
+        allowed_extensions = [".jpg", ".jpeg", ".png", ".webp"]
         ext = os.path.splitext(cover.name)[1].lower()
 
         if ext not in allowed_extensions:

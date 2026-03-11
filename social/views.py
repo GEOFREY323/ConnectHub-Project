@@ -203,9 +203,12 @@ def profile(request):
         form = ProfileForm(request.POST, request.FILES, instance=prof)
 
         if form.is_valid():
+            print('Profile form is valid, saving...')
             form.save()
             messages.success(request, "Profile updated.")
             return redirect("profile")
+        else:
+            print('Profile form is invalid:', form.errors)
 
     else:
         form = ProfileForm(instance=prof)
