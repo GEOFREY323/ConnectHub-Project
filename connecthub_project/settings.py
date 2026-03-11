@@ -59,7 +59,7 @@ CSRF_TRUSTED_ORIGINS = [
     'https://connecthub-project-production.up.railway.app',
     'http://localhost',
 ]
-secure_proxy_ssl_header = ('HTTP_X_FORWARDED_PROTO', 'https')
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 
 # Application definition
 
